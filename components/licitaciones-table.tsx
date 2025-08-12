@@ -141,28 +141,14 @@ export default function LicitacionesTable(
   const [total, setTotal] = useState(0)
   const [filtered, setFiltered] = useState(0)
 
-  const [search, setSearch] = useState("")
-  const [searchDebounced, setSearchDebounced] = useState("")
   const [facets, setFacets] = useState<Facets | null>(null)
   const [facetsLoading, setFacetsLoading] = useState(false)
   const [departamentos, setDepartamentos] = useState<string[]>([])
   const [ciudades, setCiudades] = useState<string[]>([])
   const [estados, setEstados] = useState<string[]>([])
-  const [procesos, setProcesos] = useState<string[]>([])
-  const [nit, setNit] = useState("")
-  const [nitDebounced, setNitDebounced] = useState("")
   const [proveedor, setProveedor] = useState("")
   const [proveedorDebounced, setProveedorDebounced] = useState("")
 
-  // Debounce text inputs
-  useEffect(() => {
-    const t = setTimeout(() => setSearchDebounced(search), 500)
-    return () => clearTimeout(t)
-  }, [search])
-  useEffect(() => {
-    const t = setTimeout(() => setNitDebounced(nit), 500)
-    return () => clearTimeout(t)
-  }, [nit])
   useEffect(() => {
     const t = setTimeout(() => setProveedorDebounced(proveedor), 500)
     return () => clearTimeout(t)
@@ -205,13 +191,11 @@ export default function LicitacionesTable(
           sort: sort ? String(sort) : "",
           order,
         })
-        if (searchDebounced) params.set("search", searchDebounced)
-        if (nitDebounced) params.set("nit_entidad", nitDebounced)
+
         if (proveedorDebounced) params.set("proveedor_adjudicado", proveedorDebounced)
         departamentos.forEach((d) => params.append("departamento", d))
         ciudades.forEach((c) => params.append("ciudad", c))
         estados.forEach((e) => params.append("estado_contrato", e))
-        procesos.forEach((p) => params.append("proceso_de_compra", p))
 
         const res = await fetch(`/api/licitaciones?${params.toString()}`, {
           method: "GET",
@@ -241,13 +225,10 @@ export default function LicitacionesTable(
     pageSize,
     sort,
     order,
-    searchDebounced,
-    nitDebounced,
     proveedorDebounced,
     departamentos,
     ciudades,
     estados,
-    procesos,
   ])
 
   useEffect(() => {
@@ -256,13 +237,10 @@ export default function LicitacionesTable(
     pageSize,
     sort,
     order,
-    searchDebounced,
-    nitDebounced,
     proveedorDebounced,
     departamentos,
     ciudades,
-    estados,
-    procesos,
+    estados
   ])
 
   const totalPages = useMemo(() => {
@@ -280,13 +258,10 @@ export default function LicitacionesTable(
   }
 
   const clearFilters = () => {
-    setSearch("")
-    setNit("")
     setProveedor("")
     setDepartamentos([])
     setCiudades([])
     setEstados([])
-    setProcesos([])
   }
 
   return (
@@ -299,12 +274,6 @@ export default function LicitacionesTable(
       <div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-12">
         <div className="space-y-3 lg:col-span-9">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
-            <Input
-              placeholder="Búsqueda global (NIT, departamento, ciudad, proceso, estado, proveedor)"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="md:flex-1 rounded-lg border-neutral-200 bg-white text-neutral-900 placeholder:text-neutral-400 focus-visible:ring-2 focus-visible:ring-sky-500/30"
-            />
             <div className="flex items-center gap-2">
               <span className="text-sm text-neutral-500">Filas</span>
               <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
@@ -343,25 +312,6 @@ export default function LicitacionesTable(
               selected={estados}
               onChange={setEstados}
             />
-            <MultiSelect
-              label="Proceso de compra"
-              placeholder={facetsLoading ? "Cargando..." : "Selecciona proceso(s)"}
-              options={facets?.procesos ?? []}
-              selected={procesos}
-              onChange={setProcesos}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-800">NIT Entidad</label>
-              <Input
-                placeholder="Ej: 800123456"
-                value={nit}
-                onChange={(e) => setNit(e.target.value)}
-                className="rounded-lg border-neutral-200 placeholder:text-neutral-400 focus-visible:ring-2 focus-visible:ring-sky-500/30"
-              />
-            </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-neutral-800">Proveedor adjudicado</label>
               <Input
