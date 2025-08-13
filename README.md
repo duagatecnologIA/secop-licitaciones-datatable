@@ -38,17 +38,17 @@ Sistema web para consulta y análisis de licitaciones públicas del SECOP (Siste
 flowchart LR
     subgraph DEV[Desarrollo y Preparación]
         X[Commit + Push en Git]
-        E[Git Repo\nDockerfile + Código]
-        V[Verificación / Tests]
+        E[Git Repo\nDockerfile + Codigo]
+        V[Verificación y Tests]
         F[Ansible\nPlaybook de Despliegue]
     end
 
     subgraph APP[Aplicación en Producción]
         A[Next.js App]
-        D[API Interna\n(endpoint /api/licitaciones)]
-        B[Supabase\nAuth + DB]
+        D[API Interna\nendpoint api/licitaciones]
+        B[Supabase\nAuth y DB]
         C[AWS IAM\nSecrets]
-        S[API SECOP\nDatos Públicos]
+        S[API SECOP\nDatos Publicos]
     end
 
     subgraph INFRA[Infraestructura y Monitoreo]
@@ -71,6 +71,7 @@ flowchart LR
 
     %% Monitoreo
     G --> H
+
 ```
 
 ---
