@@ -36,21 +36,41 @@ Sistema web para consulta y análisis de licitaciones públicas del SECOP (Siste
 
 ```mermaid
 flowchart LR
-    A[Next.js App] --> D[API Interna]
-    D --> I[API SECOP
-Endpoint /api/licitaciones]
-    A --> C[AWS IAM
-Secrets]
-    C --> B[Supabase
-Auth + DB]
-    E[Git Repo
-Dockerfile + Código] --> F[Ansible
-Despliegue]
-    F --> G[EC2 + Docker
-App desplegada]
-    G --> H[Grafana
-Monitoreo]
-    E --> G
+    subgraph DEV[Desarrollo y Preparación]
+        X[Commit + Push en Git]
+        E[Git Repo\nDockerfile + Código]
+        V[Verificación / Tests]
+        F[Ansible\nPlaybook de Despliegue]
+    end
+
+    subgraph APP[Aplicación en Producción]
+        A[Next.js App]
+        D[API Interna\n(endpoint /api/licitaciones)]
+        B[Supabase\nAuth + DB]
+        C[AWS IAM\nSecrets]
+        S[API SECOP\nDatos Públicos]
+    end
+
+    subgraph INFRA[Infraestructura y Monitoreo]
+        G[EC2 + Docker\nApp desplegada]
+        H[Grafana + Prometheus\nMonitoreo]
+    end
+
+    %% Flujo de despliegue
+    X --> E
+    E --> V
+    V --> F
+    F --> G
+
+    %% Conexiones de la App
+    G --> A
+    A --> D
+    D --> S
+    A --> C
+    C --> B
+
+    %% Monitoreo
+    G --> H
 ```
 
 ---
