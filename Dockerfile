@@ -1,48 +1,49 @@
-# === Etapa 1: Builder ===
-# Usa una imagen de Node para construir la aplicación
-FROM node:20-alpine AS builder
-
+# === Etapa 1: Dependencias ===
+# Instala las dependencias necesarias para la build en una capa separada para el cacheo.
+FROM node:20-alpine AS deps
 # Instala pnpm
 RUN npm install -g pnpm
-
-# Establece el directorio de trabajo
 WORKDIR /app
 
 # Copia los archivos de dependencias
 COPY package.json pnpm-lock.yaml* ./
+# Instala las dependencias usando el lockfile para asegurar consistencia
+RUN pnpm install --frozen-lockfile
 
-# Instala TODAS las dependencias (incluidas las de desarrollo) con pnpm
-# Se usa --config.strict-peer-dependencies=false para resolver conflictos
-RUN pnpm install --config.strict-peer-dependencies=false
+# === Etapa 2: Builder ===
+# Construye la aplicación usando las dependencias de la etapa anterior.
+FROM node:20-alpine AS builder
+# Instala pnpm
+RUN npm install -g pnpm
+WORKDIR /app
 
+# Copia las dependencias ya instaladas desde la etapa 'deps'
+COPY --from=deps /app/node_modules ./node_modules
 # Copia el resto del código fuente
 COPY . .
 
-# Construye la aplicación para producción
-RUN pnpm run build
+# Asegúrate de que el archivo next.config.mjs esté configurado con 'output: "standalone"'
+# Construye la aplicación
+RUN pnpm build
 
-# === Etapa 2: Producción ===
-# Usa una imagen de Node limpia y ligera para la producción
-FROM node:20-alpine AS production
-
-# Instala pnpm
-RUN npm install -g pnpm
-
+# === Etapa 3: Runner ===
+# Prepara la imagen final de producción, que es ligera y optimizada.
+FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Copia los manifiestos de dependencias desde la etapa 'builder'
-COPY --from=builder /app/package.json /app/pnpm-lock.yaml* ./
+# Establece las variables de entorno para producción
+ENV NODE_ENV=production
+# Deshabilita la telemetría de Next.js
+ENV NEXT_TELEMETRY_DISABLED 1
 
-# Instala ÚNICAMENTE las dependencias de producción con pnpm
-# Se usa --config.strict-peer-dependencies=false para resolver el mismo conflicto
-RUN pnpm install --prod --config.strict-peer-dependencies=false
-
-# Copia los artefactos de la build desde la etapa 'builder'
-COPY --from=builder /app/.next ./.next
+# Copia la salida 'standalone' optimizada desde la etapa 'builder'.
+# Esta carpeta contiene solo lo necesario para ejecutar la app.
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
-# Expone el puerto que usará la aplicación
+# Expone el puerto 3000, el predeterminado para Next.js
 EXPOSE 3000
 
-# El comando para iniciar la aplicación
-CMD ["pnpm", "start"]
+# El comando para iniciar el servidor de Node.js optimizado que Next.js crea.
+CMD ["node", "server.js"]
