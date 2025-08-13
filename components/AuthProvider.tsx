@@ -1,10 +1,13 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { supabaseAuth, type AuthUser } from '@/lib/supabaseAuthClient'
+// ✅ CORRECCIÓN: Se importa el tipo 'User' directamente de Supabase
+import { type User } from '@supabase/supabase-js'
+import { supabaseAuth } from '@/lib/supabaseAuthClient'
 
 interface AuthContextType {
-  user: AuthUser | null
+  // ✅ CORRECCIÓN: Se usa el tipo 'User' en lugar de 'AuthUser'
+  user: User | null
   loading: boolean
 }
 
@@ -18,7 +21,8 @@ export function useAuthContext() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null)
+  // ✅ CORRECCIÓN: Se usa el tipo 'User' en el estado
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
