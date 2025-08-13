@@ -56,6 +56,11 @@ flowchart LR
         H[Grafana + Prometheus: Monitoreo]
     end
 
+    subgraph SECURITY[Seguridad y Control de Acceso]
+        SG[Grupos de Seguridad AWS: Reglas de entrada/salida]
+        P[Puertos habilitados: 80 (HTTP), 443 (HTTPS), 3000 (App)]
+    end
+
     %% Flujo de construcción y despliegue
     B1 --> X
     X --> E
@@ -69,8 +74,13 @@ flowchart LR
     A --> C
     C --> B
 
-    %% Monitoreo y alertas personalizadas a ip, o dominios
+    %% Seguridad
+    SG --> P
+    P --> G
+
+    %% Monitoreo
     G --> H
+
     
 
 
