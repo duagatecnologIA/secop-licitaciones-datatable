@@ -37,10 +37,10 @@ Sistema web para consulta y análisis de licitaciones públicas del SECOP (Siste
 ```mermaid
 flowchart LR
     subgraph DEV[Desarrollo y Preparación]
+        B1[Construcción\nDockerfile + Docker Compose + Código]
         X[Commit + Push en Git]
-        E[Git Repo\nDockerfile + Codigo]
-        V[Verificación y Tests]
-        F[Ansible\nPlaybook de Despliegue]
+        E[Git Repo\nCódigo + Configuración]
+        F[Ansible\nPlaybook de Despliegue (local)]
     end
 
     subgraph APP[Aplicación en Producción]
@@ -56,11 +56,11 @@ flowchart LR
         H[Grafana + Prometheus\nMonitoreo]
     end
 
-    %% Flujo de despliegue
+    %% Flujo de construcción y despliegue
+    B1 --> X
     X --> E
-    E --> V
-    V --> F
     F --> G
+    E --> F
 
     %% Conexiones de la App
     G --> A
@@ -71,6 +71,7 @@ flowchart LR
 
     %% Monitoreo
     G --> H
+
 
 ```
 
