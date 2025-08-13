@@ -1,0 +1,71 @@
+---
+- name: Despliegue aplicación Next.js con secretos AWS - App-SECOP-datatable
+  hosts: produccion
+  become: yes
+  vars:
+    secret_arn: "arn:aws:secretsmanager:us-east-1:290059794118:secret:prod-secop-uGe1Bk"
+    project_path: "/opt/secop-licitaciones-datatable"
+    repo_url: "https://github.com/Hmarquezrada/secop-licitaciones-datatable.git"
+
+  tasks:
+    - name: Instalar dependencias necesarias
+      apt:
+        name:
+          - git
+          - jq
+          - docker.io
+          - docker-compose
+          - nodejs
+          - npm
+        state: present
+        update_cache: yes
+
+    - name: Crear carpeta del proyecto
+      file:
+        path: "{{ project_path }}"
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    - name: Clonar o actualizar repositorio
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ project_path }}"
+        version: main
+        force: yes
+
+    - name: Obtener secreto desde AWS Secrets Manager
+      command: >
+        aws secretsmanager get-secret-value
+        --secret-id {{ secret_arn }}
+        --query SecretString
+        --output text
+      register: secreto_json
+
+    - name: Convertir secreto JSON a diccionario
+      set_fact:
+        secret_data: "{{ secreto_json.stdout | from_json }}"
+
+    - name: Generar archivo .env sin problemas de comillas
+      copy:
+        dest: "{{ project_path }}/.env"
+        content: |
+          {% for k, v in secret_data.items() %}
+          {{ k }}={{ v }}
+          {% endfor %}
+
+    - name: Mostrar variables .env obtenidas
+      shell: cat {{ project_path }}/.env
+      register: env_content
+
+    - debug:
+        msg: "{{ env_content.stdout_lines }}"
+
+    - name: Construir y levantar contenedor
+      shell: |
+        cd {{ project_path }}
+        docker-compose build --no-cache
+        docker-compose up -d
+      args:
+        executable: /bin/bash
