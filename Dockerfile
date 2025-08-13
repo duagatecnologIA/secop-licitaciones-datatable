@@ -9,7 +9,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instala TODAS las dependencias (incluidas las de desarrollo)
-RUN npm install
+# Se usa --legacy-peer-deps para resolver conflictos de versiones entre paquetes
+RUN npm install --legacy-peer-deps
 
 # Copia el resto del código fuente
 COPY . .
