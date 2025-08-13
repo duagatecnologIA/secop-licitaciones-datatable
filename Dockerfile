@@ -28,7 +28,8 @@ WORKDIR /app
 COPY --from=builder /app/package*.json ./
 
 # Instala ÚNICAMENTE las dependencias de producción
-RUN npm install --production
+# Se usa --legacy-peer-deps para resolver el mismo conflicto en la etapa final
+RUN npm install --production --legacy-peer-deps
 
 # Copia los artefactos de la build desde la etapa 'builder'
 COPY --from=builder /app/.next ./.next
