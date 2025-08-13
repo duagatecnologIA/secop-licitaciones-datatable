@@ -1,177 +1,151 @@
 # 🏛️ SECOP Consultas - Sistema de Licitaciones Públicas
 
-Sistema web para consulta y análisis de licitaciones públicas del SECOP (Sistema Electrónico de Contratación Pública) de Colombia.
+Sistema web para consulta y análisis de licitaciones públicas del SECOP (Sistema Electrónico de Contratación Pública) de Colombia, con una arquitectura moderna, segura y automatizada para despliegue en AWS.
 
-## ✨ Características
+---
 
-- **🔐 Autenticación Segura**: Sistema de login con Supabase
-- **📊 Tabla de Licitaciones**: Visualización de datos con paginación
-- **🔍 Búsqueda Avanzada**: Filtros múltiples y búsqueda por texto
-- **📱 Responsive**: Diseño adaptativo para todos los dispositivos
-- **🎨 UI Moderna**: Interfaz atractiva con animaciones y gradientes
+## ✨ Características Principales
 
-## 🚀 Tecnologías Utilizadas
+- **🔐 Autenticación Segura** con **Supabase**.
+- **📊 Visualización Avanzada**: tabla con paginación, filtros múltiples y búsqueda por texto.
+- **📱 Diseño Responsive** compatible con cualquier dispositivo.
+- **🎨 UI Moderna** con animaciones, gradientes y componentes reutilizables.
+- **⚙️ Arquitectura Contenerizada**: despliegue con Docker y automatización vía Ansible.
+- **🔒 Gestión Segura de Credenciales** mediante AWS IAM.
+- **📡 Monitoreo en Tiempo Real** con Grafana + UptimeKuma "Sistema de alertas en tiempo real a telegram"
 
-- **Frontend**: Next.js 15.2.4, TypeScript, React
-- **Estilos**: Tailwind CSS v4
-- **Autenticación**: Supabase
-- **UI Components**: Radix UI, Lucide React
-- **Formularios**: React Hook Form, Zod
-- **Gestión de Estado**: React Context API
+---
+
+## 🚀 Arquitectura y Flujo de Despliegue
+
+**1. Desarrollo y Backend Integrado**  
+- Aplicación **Next.js** con API interna.  
+- Autenticación y sesiones persistentes con **Supabase**.  
+- Variables de entorno y claves gestionadas por **AWS IAM**.  
+
+**2. Contenerización y Orquestación**  
+- Imagen Docker construida desde el **Dockerfile** del repositorio.  
+- Despliegue automatizado con **Ansible** vía **SSH** (.pem).  
+- EC2 configurada con **grupos de seguridad** y **gestión de puertos**.  
+
+**3. Monitoreo y Observabilidad**  
+- **Grafana** y **Prometheus** para monitoreo de métricas (CPU, RAM, estado de contenedores).  
+- Alertas configuradas para caídas de servicio o alta carga.  
+
+**Mapa de Arquitectura:**
+
+```mermaid
+flowchart LR
+    A[Next.js App] --> B[Supabase\nAuth + DB]
+    A --> C[AWS IAM\nSecrets]
+    A --> D[API Interna]
+    D --> C
+    E[Git Repo\nDockerfile + Código] --> F[Ansible\nDespliegue]
+    F --> G[EC2 + Docker\nApp desplegada]
+    G --> H[Grafana\nMonitoreo]
+    E --> G
+```
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+
+**Frontend:**  
+- Next.js 15.2.4, React, TypeScript  
+- Tailwind CSS v4, Radix UI, Lucide React  
+- React Hook Form, Zod, Context API  
+
+**Backend / API Interna:**  
+- Next.js API Routes  
+- Integración con datasets SECOP  
+
+**Infraestructura y DevOps:**  
+- Docker, Ansible, AWS EC2, AWS IAM  
+- Supabase (Auth + DB)  
+- Grafana + Prometheus para monitoreo  
+
+---
 
 ## 📋 Prerrequisitos
 
-- Node.js 18+ 
-- pnpm (recomendado) o npm
-- Cuenta en Supabase
+- Node.js 18+  
+- pnpm (recomendado) o npm  
+- Cuenta en Supabase  
+- Acceso a AWS IAM y EC2 con clave `.pem`  
 
-## 🛠️ Instalación
-
-### 1. Clonar el repositorio
-```bash
-git clone <tu-repositorio>
-cd secop-consultas-next
-```
-
-### 2. Instalar dependencias
-```bash
-pnpm install
-# o
-npm install
-```
-
-### 3. Configurar variables de entorno
-Crear archivo `.env.local` en la raíz del proyecto:
-```env
-NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=tu_clave_publica_de_supabase
-```
-
-### 4. Ejecutar en desarrollo
-```bash
-pnpm dev
-# o
-npm run dev
-```
-
-El proyecto estará disponible en [http://localhost:3000](http://localhost:3000)
+---
 
 ## 🏗️ Estructura del Proyecto
 
 ```
 secop-consultas-next/
 ├── app/                    # App Router de Next.js
-│   ├── api/               # Endpoints de API
-│   ├── globals.css        # Estilos globales
-│   ├── layout.tsx         # Layout principal
-│   ├── page.tsx           # Página de inicio
-│   ├── login/             # Página de autenticación
-│   └── panel/             # Panel principal (protegido)
+│   ├── api/                # Endpoints de API
+│   ├── globals.css         # Estilos globales
+│   ├── layout.tsx          # Layout principal
+│   ├── page.tsx            # Página de inicio
+│   ├── login/              # Página de autenticación
+│   └── panel/              # Panel principal (protegido)
 ├── components/             # Componentes reutilizables
-│   ├── ui/                # Componentes de UI base
-│   ├── AuthProvider.tsx   # Proveedor de autenticación
-│   ├── AuthGuard.tsx      # Guardia de rutas protegidas
-│   └── licitaciones-table.tsx # Tabla de licitaciones
 ├── hooks/                  # Hooks personalizados
-│   └── useAuth.ts         # Hook de autenticación
 ├── lib/                    # Utilidades y clientes
-│   └── supabaseAuthClient.ts # Cliente de Supabase
-└── README.md              # Este archivo
+├── Dockerfile              # Imagen para contenerización
+├── ansible/                # Playbooks de despliegue
+└── README.md
 ```
-
-## 🔐 Autenticación
-
-El sistema utiliza Supabase para la autenticación de usuarios:
-
-- **Login**: Email y contraseña
-- **Sesiones persistentes**: Las sesiones se mantienen entre recargas
-- **Rutas protegidas**: Solo usuarios autenticados pueden acceder al panel
-- **Logout**: Cierre de sesión seguro
-
-## 📱 Páginas Principales
-
-### 🏠 Página de Inicio (`/`)
-- Landing page pública
-- Información sobre el sistema
-- Botón de acceso al login
-
-### 🔑 Login (`/login`)
-- Formulario de autenticación
-- Validación de credenciales
-- Redirección automática al panel
-
-### 📊 Panel (`/panel`)
-- Tabla de licitaciones con datos reales
-- Filtros y búsqueda avanzada
-- Información del usuario logueado
-- Botón de logout
-
-## 🎨 Personalización
-
-### Colores del Tema
-El sistema utiliza una paleta de colores consistente:
-- **Primario**: `sky-500`, `blue-600`, `violet-600`
-- **Neutral**: `neutral-50`, `neutral-900`
-- **Fondo**: Gradientes suaves y transparencias
-
-### Animaciones
-- Elementos flotantes en el fondo del login
-- Transiciones suaves en botones e inputs
-- Efectos hover y focus
-
-## 🚀 Despliegue
-
-### Vercel (Recomendado)
-1. Conectar repositorio de GitHub
-2. Configurar variables de entorno
-3. Desplegar automáticamente
-
-### Otros proveedores
-- Netlify
-- Railway
-- Heroku
-
-## 🔧 Scripts Disponibles
-
-```bash
-pnpm dev          # Desarrollo local
-pnpm build        # Construir para producción
-pnpm start        # Iniciar servidor de producción
-pnpm lint         # Verificar código
-pnpm type-check   # Verificar tipos TypeScript
-```
-
-## 📊 API y Datos
-
-El sistema consume datos de licitaciones públicas a través de:
-- **Dataset**: jbjy-vk9h (Licitaciones SECOP)
-- **Endpoint**: `/api/licitaciones`
-- **Filtros**: Entidad, estado, fecha, valor, etc.
-
-## 🤝 Contribución
-
-1. Fork del proyecto
-2. Crear rama para nueva funcionalidad
-3. Commit de cambios
-4. Push a la rama
-5. Crear Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la licencia MIT.
-
-## 📞 Soporte
-
-Para soporte técnico o preguntas:
-- Crear un issue en GitHub
-- Contactar al equipo de desarrollo
-
-## 🔄 Historial de Versiones
-
-- **v1.0.0**: Implementación inicial con autenticación y tabla de licitaciones
-- **v1.1.0**: Mejoras en UI/UX y diseño responsive
-- **v1.2.0**: Sistema de filtros avanzados y búsqueda
 
 ---
 
-**Desarrollado con ❤️ para la consulta eficiente de licitaciones públicas**
+## 🔐 Autenticación y Seguridad
+
+- **Login**: Email y contraseña vía Supabase.  
+- **Protección de rutas** con AuthGuard.  
+- **Gestión de secretos**: AWS IAM.  
+- **Grupos de seguridad EC2**:
+  - Permitir **HTTP (80)**, **HTTPS (443)** y puerto de la app (ej. 3000).
+  - Restringir **SSH (22)** solo a IPs autorizadas.  
+
+---
+
+## 📊 API y Datos
+
+- **Dataset**: `jbjy-vk9h` (Licitaciones SECOP).  
+- **Endpoint interno**: `/api/licitaciones`.  
+- **Filtros**: entidad, estado, fecha, valor.  
+
+---
+
+## ⚙️ Automatización de Despliegue
+
+1. Push de cambios a la rama correspondiente en **Git**.  
+2. **Ansible** ejecuta:
+   - `git pull`
+   - `docker build`
+   - `docker run` con mapeo de puertos.
+3. Verificación de servicio y reinicio automático si falla.  
+
+---
+
+## 📡 Monitoreo con Grafana
+
+- **Prometheus** recolecta métricas de contenedores y servidor.  
+- **Grafana** presenta dashboards con:
+  - Estado de la aplicación.  
+  - Consumo de recursos.  
+  - Disponibilidad y tiempo de respuesta.  
+- Alertas por correo o Telegram en caso de incidentes.  
+
+---
+
+## 🚀 Despliegue en AWS
+
+```bash
+# Ejemplo de despliegue con Ansible
+ansible-playbook -i hosts deploy.yml --key-file key.pem
+```
+
+---
+
+## 📄 Licencia
+
+MIT License.
