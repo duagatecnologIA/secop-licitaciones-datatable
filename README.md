@@ -58,7 +58,7 @@ flowchart LR
 
     subgraph SECURITY[Seguridad y Control de Acceso]
         SG[Grupos de Seguridad AWS: Reglas de entrada/salida]
-        P[Puertos habilitados: 80 (HTTP), 443 (HTTPS), 3000 (App)]
+        P[Puertos habilitados -> 80 HTTP, 443 HTTPS, 3000 App]
     end
 
     %% Flujo de construcción y despliegue
@@ -81,7 +81,6 @@ flowchart LR
     %% Monitoreo
     G --> H
 
-    
 
 
 ```
