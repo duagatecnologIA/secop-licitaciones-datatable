@@ -9,11 +9,11 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 # Copia los archivos de dependencias
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml* ./
 
 # Instala TODAS las dependencias (incluidas las de desarrollo) con pnpm
-# Se usa --legacy-peer-deps para resolver conflictos de versiones entre paquetes
-RUN pnpm install --legacy-peer-deps
+# Se usa --config.strict-peer-dependencies=false para resolver conflictos
+RUN pnpm install --config.strict-peer-dependencies=false
 
 # Copia el resto del código fuente
 COPY . .
@@ -31,12 +31,11 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 # Copia los manifiestos de dependencias desde la etapa 'builder'
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/pnpm-lock.yaml ./
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml* ./
 
 # Instala ÚNICAMENTE las dependencias de producción con pnpm
-# Se usa --legacy-peer-deps para resolver el mismo conflicto en la etapa final
-RUN pnpm install --prod --legacy-peer-deps
+# Se usa --config.strict-peer-dependencies=false para resolver el mismo conflicto
+RUN pnpm install --prod --config.strict-peer-dependencies=false
 
 # Copia los artefactos de la build desde la etapa 'builder'
 COPY --from=builder /app/.next ./.next
