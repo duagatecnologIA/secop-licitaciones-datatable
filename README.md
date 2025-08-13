@@ -36,18 +36,24 @@ Sistema web para consulta y análisis de licitaciones públicas del SECOP (Siste
 
 ```mermaid
 flowchart LR
-    A[Next.js App] --> B[Supabase\nAuth + DB]
-    A --> C[AWS IAM\nSecrets]
-    A --> D[API Interna]
-    D --> C
-    E[Git Repo\nDockerfile + Código] --> F[Ansible\nDespliegue]
-    F --> G[EC2 + Docker\nApp desplegada]
-    G --> H[Grafana\nMonitoreo]
+    A[Next.js App] --> D[API Interna]
+    D --> I[API SECOP
+Endpoint /api/licitaciones]
+    A --> C[AWS IAM
+Secrets]
+    C --> B[Supabase
+Auth + DB]
+    E[Git Repo
+Dockerfile + Código] --> F[Ansible
+Despliegue]
+    F --> G[EC2 + Docker
+App desplegada]
+    G --> H[Grafana
+Monitoreo]
     E --> G
 ```
 
 ---
-
 ## 🛠️ Tecnologías Utilizadas
 
 **Frontend:**  
