@@ -1,22 +1,22 @@
-# SECOP Consultas - Sistema de Licitaciones Públicas.
+# 🏛️ SECOP Consultas - Sistema de Licitaciones Públicas
 
 Sistema web para consulta y análisis de licitaciones públicas del SECOP (Sistema Electrónico de Contratación Pública) de Colombia, con una arquitectura moderna, segura y automatizada para despliegue en AWS.
 
 ---
 
-## Características Principales
+## ✨ Características Principales
 
-- **Autenticación Segura** con **Supabase**.
-- **Visualización Avanzada**: tabla con paginación, filtros múltiples y búsqueda por texto.
-- **Diseño Responsive** compatible con cualquier dispositivo.
-- **UI Moderna** con animaciones, gradientes y componentes reutilizables.
-- **Arquitectura Contenerizada**: despliegue con Docker y automatización vía Ansible.
-- **Gestión Segura de Credenciales** mediante AWS IAM.
-- **Monitoreo en Tiempo Real** con Grafana + UptimeKuma "Sistema de alertas en tiempo real a telegram"
+- **🔐 Autenticación Segura** con **Supabase**.
+- **📊 Visualización Avanzada**: tabla con paginación, filtros múltiples y búsqueda por texto.
+- **📱 Diseño Responsive** compatible con cualquier dispositivo.
+- **🎨 UI Moderna** con animaciones, gradientes y componentes reutilizables.
+- **⚙️ Arquitectura Contenerizada**: despliegue con Docker y automatización vía Ansible.
+- **🔒 Gestión Segura de Credenciales** mediante AWS IAM.
+- **📡 Monitoreo en Tiempo Real** con Grafana + UptimeKuma "Sistema de alertas en tiempo real a telegram"
 
 ---
 
-## Arquitectura y Flujo de Despliegue
+## 🚀 Arquitectura y Flujo de Despliegue
 
 **1. Desarrollo y Backend Integrado**  
 - Aplicación **Next.js** con API interna.  
@@ -86,7 +86,7 @@ flowchart LR
 ```
 
 ---
-## ecnologías Utilizadas
+## 🛠️ Tecnologías Utilizadas
 
 **Frontend:**  
 - Next.js 15.2.4, React, TypeScript  
@@ -104,7 +104,7 @@ flowchart LR
 
 ---
 
-## Prerrequisitos
+## 📋 Prerrequisitos
 
 - Node.js 18+  
 - pnpm (recomendado) o npm  
@@ -113,7 +113,7 @@ flowchart LR
 
 ---
 
-## Estructura del Proyecto
+## 🏗️ Estructura del Proyecto
 
 ```
 secop-consultas-next/
@@ -134,7 +134,7 @@ secop-consultas-next/
 
 ---
 
-## Autenticación y Seguridad
+## 🔐 Autenticación y Seguridad
 
 - **Login**: Email y contraseña vía Supabase.  
 - **Protección de rutas** con AuthGuard.  
@@ -145,7 +145,7 @@ secop-consultas-next/
 
 ---
 
-## API y Datos
+## 📊 API y Datos
 
 - **Dataset**: `jbjy-vk9h` (Licitaciones SECOP).  
 - **Endpoint interno**: `/api/licitaciones`.  
@@ -153,7 +153,7 @@ secop-consultas-next/
 
 ---
 
-## Automatización de Despliegue
+## ⚙️ Automatización de Despliegue
 
 1. Push de cambios a la rama correspondiente en **Git**.  
 2. **Ansible** ejecuta:
@@ -164,7 +164,7 @@ secop-consultas-next/
 
 ---
 
-## Monitoreo con Grafana
+## 📡 Monitoreo con Grafana
 
 - **Prometheus** recolecta métricas de contenedores y servidor.  
 - **Grafana** presenta dashboards con:
@@ -175,7 +175,7 @@ secop-consultas-next/
 
 ---
 
-## Despliegue en AWS
+## 🚀 Despliegue en AWS
 
 ```bash
 # Ejemplo de despliegue con Ansible
@@ -184,6 +184,6 @@ ansible-playbook -i hosts deploy.yml --key-file key.pem
 
 ---
 
-## Licencia
+## 📄 Licencia
 
 MIT License.
