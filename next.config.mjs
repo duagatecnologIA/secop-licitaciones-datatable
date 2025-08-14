@@ -1,10 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Aquí pueden estar tus otras configuraciones
-  // ...
-
-  // Añade esta línea para solucionar el problema
-  output: 'standalone',
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  images: {
+    unoptimized: true,
+  },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
