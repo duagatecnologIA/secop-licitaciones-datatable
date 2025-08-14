@@ -86,7 +86,7 @@ flowchart LR
 ```
 
 ---
-## Tecnologías Utilizadas
+## ecnologías Utilizadas
 
 **Frontend:**  
 - Next.js 15.2.4, React, TypeScript  
